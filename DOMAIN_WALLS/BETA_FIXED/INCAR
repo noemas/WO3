@@ -1,0 +1,38 @@
+ISMEAR     =  0
+SIGMA      =  0.01
+PREC       =  High
+EDIFF      =  1E-8
+ENCUT      =  600
+ADDGRID    = .TRUE.
+LASPH      = .TRUE.
+#GGA_COMPAT = .FALSE.
+#GGA        =  PS
+
+LWAVE      = .TRUE.
+ISTART     = 1
+ICHARG     = 1
+LCHARG     = .TRUE.
+
+IBRION = 1
+NSW = 120
+NELM = 200
+NELMIN = 5
+EDIFFG = -1E-4
+ISIF = 3
+POTIM = 0.01
+LREAL = On
+NSIM = 8
+ALGO = Normal
+
+#NEDOS = 3000
+#LORBIT = 1
+#RWIGS = 1
+
+ROPT = 1E-4 1E-4
+
+NCORE = 1
+
+BMIX = 1.00
+AMIN = 0.01
+
+#LVTOT = .TRUE.

@@ -1,0 +1,35 @@
+FINDSYM, Version 4.2, June 2014
+Written by Harold T. Stokes, Branton J. Campbell, and Dorian M. Hatch
+Brigham Young University
+ 
+ title
+Tolerance:    0.00010
+Lattice vectors in cartesian coordinates:
+   5.17796   0.00000   0.00000
+   0.00000   5.17796   0.00000
+   0.00000   0.00000   7.74963
+Lattice parameters, a,b,c,alpha,beta,gamma:
+   5.17796   5.17796   7.74963  90.00000  90.00000  90.00000
+Centering: P
+Number of atoms in unit cell:
+ 16
+Type of each atom:
+12*O 4*W 
+Position of each atom (dimensionless coordinates)
+   1   0.30119   0.20474   0.49167
+   2   0.70620   0.80190   0.50833
+   3   0.70582   0.79673   0.00833
+   4   0.30151   0.21076   0.99167
+   5   0.44964   0.55706   0.25366
+   6   0.55289   0.44606   0.75726
+   7   0.05036   0.94294   0.25366
+   8   0.94711   0.05394   0.75726
+   9   0.93292   0.46925   0.32093
+  10   0.06692   0.53000   0.67935
+  11   0.56708   0.03075   0.32093
+  12   0.43308   0.97000   0.67935
+  13  -0.18607   0.48341   0.21812
+  14   1.14676   0.45331   0.78188
+  15   0.97271   0.31935   0.28188
+  16  -0.03694   0.63977   0.71812
+------------------------------------------
