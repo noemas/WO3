@@ -14,4 +14,12 @@ do
         vasp_findsym.sh --in=P_${i}.vasp --out=test.cif --tol=1e-5
 done
 
+#check the symmetry of the PQ structures --> space group Pbcn
+for ((i=0; i<=40; i++))
+do
+        echo $i
+        vasp_findsym.sh --in=PQ_${i}.vasp --out=test.cif --tol=1e-5
+done
+
+
 
