@@ -57,7 +57,7 @@ P_P4nmm=29
 Q_Pbcn=29
 
 #number of electrons per unit cell for Q unstrained doped calculations
-nelect=1.5
+nelect=0.18
 
 #number of electron window for chem pot calculations
 nelect_min=0.0
@@ -66,22 +66,21 @@ nsteps=4
 #index of Q amplitude for which chem pot is determined
 Q_index=13
 
-script_start=9
-script_end=9
-
-
+script_start=10
+script_end=10
 
 #_____________________________________________________#
 P_ab_m_m=$(echo "($lat_ab_m_P4nmm - $lat_ab_m_P4ncc)/$P_P4nmm" | bc -l)
 P_c_m_m=$(echo "($lat_c_m_P4nmm - $lat_c_m_P4ncc)/$P_P4nmm" | bc -l)
 
-Q_a_m_m=$(echo "($lat_a_m_Pbcn - $lat_a_m_P4ncc)/$Q_Pbcn" | bc -l)
-Q_b_m_m=$(echo "($lat_b_m_Pbcn - $lat_a_m_P4ncc)/$Q_Pbcn" | bc -l)
+Q_a_m_m=$(echo "($lat_a_m_Pbcn - $lat_ab_m_P4ncc)/$Q_Pbcn" | bc -l)
+Q_b_m_m=$(echo "($lat_b_m_Pbcn - $lat_ab_m_P4ncc)/$Q_Pbcn" | bc -l)
 Q_c_m_m=$(echo "($lat_c_m_Pbcn - $lat_c_m_P4ncc)/$Q_Pbcn" | bc -l)
 
 hisym_lat_a=0
 hisym_lat_b=0
 hisym_lat_c=0
+
 
 if [ $num_of_atoms -eq 16 ]
 then
@@ -89,10 +88,13 @@ then
 	hisym_lat_b=$hisym_lat_b_16
 	hisym_lat_c=$hisym_lat_c_16
 elif [ $num_of_atoms -eq 32 ]
+then
         hisym_lat_a=$hisym_lat_a_32
         hisym_lat_b=$hisym_lat_b_32
         hisym_lat_c=$hisym_lat_c_32
 fi
+
+
 
 
 #_____________________Q UNSTRAINED_____________________#
@@ -338,7 +340,7 @@ do
 EOF
 
        #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="SCF/Q_unstrained_${i}"
+       dir_ref="Q_unstrained/Q_unstrained_${i}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1)
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1)
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1) 
@@ -434,7 +436,7 @@ do
 EOF
 
        #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="SCF/Q_unstrained_${i}"
+       dir_ref="Q_unstrained/Q_unstrained_${i}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1 | awk '{print $1}')
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1 | awk '{print $2}')
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1 | awk '{print $3}')
@@ -542,7 +544,7 @@ EOF
 
 
        #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="SCF/Q_unstrained_${Q_index}"
+       dir_ref="Q_unstrained/Q_unstrained_${Q_index}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1)
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1)
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1)
@@ -638,7 +640,7 @@ EOF
 
 
        #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="SCF/2Q_unstrained_${Q_index}"
+       dir_ref="2Q_unstrained/2Q_unstrained_${Q_index}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1)
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1)
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1)
@@ -733,7 +735,7 @@ do
 EOF
 
        #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="SCF/2Q_unstrained_${i}"
+       dir_ref="2Q_unstrained/2Q_unstrained_${i}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1)
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1)
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1)
@@ -1027,7 +1029,7 @@ do
 EOF
 
        #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="SCF/P_unstrained_${i}"
+       dir_ref="P_unstrained/P_unstrained_${i}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1)
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1)
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1)
@@ -1124,7 +1126,7 @@ do
 EOF
 
        #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="SCF/P_unstrained_${i}"
+       dir_ref="P_unstrained/P_unstrained_${i}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1 | awk '{print $1}')
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1 | awk '{print $2}')
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1 | awk '{print $3}')
