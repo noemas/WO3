@@ -1,9 +1,10 @@
 #!/bin/bash
 
+dirup="mnoe@euler.ethz.ch:/cluster/scratch/mnoe/QE/LANDAU_BETA/PQ_unstrained"
+dirdown="./PQ_unstrained/PQ_unstrained"
+fil="rscf.out"
 
-dir="P_unstrained"
-
-for ((i=0;i<40;i++))
+for ((i=0;i<=40;i++))
 do
-	scp -r mnoe@euler.ethz.ch:/cluster/scratch/mnoe/QE/LANDAU_BETA/${dir}_${i}/rscf.out ./${dir}/${dir}_${i}
+	scp -r ${dirup}_${i}/${fil} ${dirdown}_${i}
 done

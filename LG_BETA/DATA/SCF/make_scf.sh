@@ -11,8 +11,8 @@
 #7 -increasing but fixed Q in two directions and additional electrons using relaxed lattice from #2 (2Q unstrained doped)
 #8 -increasing but fixed P in one direction and relaxed lattice (P unstrained)
 #9 -increasing but fixed P in one and Q in one direction and relaxed lattice (PQ unstrained)
-#10 -increasing but fixed P in one direction and additional electrons using relaxed lattice from #7 (P unstrained doped)
-#11 -increasing but fixed P in one direction and additional electrons using relaxed lattice from #7 
+#10 -increasing but fixed P in one direction and additional electrons using relaxed lattice from #8 (P unstrained doped)
+#11 -increasing but fixed P in one direction and additional electrons using relaxed lattice from #8 
 #    and interpolating charged lattice relaxation from NaWO3 (P unstrained doped unstrained)
 
 
@@ -57,7 +57,7 @@ P_P4nmm=29
 Q_Pbcn=29
 
 #number of electrons per unit cell for Q unstrained doped calculations
-nelect=0.18
+nelect=0.0
 
 #number of electron window for chem pot calculations
 nelect_min=0.0
@@ -66,8 +66,8 @@ nsteps=4
 #index of Q amplitude for which chem pot is determined
 Q_index=13
 
-script_start=10
-script_end=10
+script_start=8
+script_end=8
 
 #_____________________________________________________#
 P_ab_m_m=$(echo "($lat_ab_m_P4nmm - $lat_ab_m_P4ncc)/$P_P4nmm" | bc -l)
@@ -796,6 +796,7 @@ then
 for ((i=0; i<=40; i++))
 do
         dir="P_unstrained/P_unstrained_${i}"
+	echo $dir
         #make directory
         if [ ! -d $dir ]
         then
@@ -868,7 +869,7 @@ EOF
         #append the k points to the rscf file
         echo "" >> $dir/rscf.in
         echo "K_POINTS automatic" >> $dir/rscf.in
-        echo "6 6 6 0 0 0" >> $dir/rscf.in
+        echo "9 9 6 0 0 0" >> $dir/rscf.in
 
 
         #make the job file
@@ -1060,7 +1061,7 @@ EOF
        #append the k points to the rscf file
        echo "" >> $dir/scf.in
        echo "K_POINTS automatic" >> $dir/scf.in
-       echo "6 6 6 0 0 0" >> $dir/scf.in
+       echo "9 9 6 0 0 0" >> $dir/scf.in
 
 
 
@@ -1068,7 +1069,7 @@ EOF
        rm $dir/job.sh
        cat > $dir/job.sh << EOF
        #!/bin/bash
-       #BSUB -n 64
+       #BSUB -n 40
        #BSUB -R "rusage[mem=3072]"
        #BSUB -W 00:40
        #BSUB -o $dir.o
@@ -1076,7 +1077,7 @@ EOF
        #BSUB -J $dir
        
 
-        mpirun pw.x -npool 64 -in scf.in > scf.out
+        mpirun pw.x -npool 40 -in scf.in > scf.out
         rm -r *.save
 EOF
 
@@ -1164,7 +1165,7 @@ EOF
        #append the k points to the rscf file
        echo "" >> $dir/scf.in
        echo "K_POINTS automatic" >> $dir/scf.in
-       echo "6 6 6 0 0 0" >> $dir/scf.in
+       echo "9 9 6 0 0 0" >> $dir/scf.in
 
 
 
