@@ -10,7 +10,7 @@ do
 	for ((i=0;i<32;i++))
 	do
 		line=$((9+i))
-		sed -i "${line}s/W//1" $file
-                sed -i "${line}s/O//1" $file
+		sed -i "${line}s/W//g" $file
+                sed -i "${line}s/O//g" $file
 	done
 done

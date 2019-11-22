@@ -7,16 +7,17 @@
 #4 -increasing but fixed Q in one direction and additional electrons using relaxed lattice from #1 
 #    and interpolating charged lattice relaxation from NaWO3 (Q unstrained doped unstrained)
 #5 -some fixed Q and large amount of electrons/holes to calculate chemical potential using relaxed lattice from #1 (chem pot)
-#7 -some fixed Q in two directions and large amount of electrons/holes to calculate chemical potential using relaxed lattice from #2 (chem pot 2Q)
+#6 -some fixed Q in two directions and large amount of electrons/holes to calculate chemical potential using relaxed lattice from #2 (chem pot 2Q)
 #7 -increasing but fixed Q in two directions and additional electrons using relaxed lattice from #2 (2Q unstrained doped)
 #8 -increasing but fixed P in one direction and relaxed lattice (P unstrained)
 #9 -increasing but fixed P in one and Q in one direction and relaxed lattice (PQ unstrained)
 #10 -increasing but fixed P in one direction and additional electrons using relaxed lattice from #8 (P unstrained doped)
 #11 -increasing but fixed P in one direction and additional electrons using relaxed lattice from #8 
 #    and interpolating charged lattice relaxation from NaWO3 (P unstrained doped unstrained)
+#12 -increasing but fixed P in one and Q in one direction and relaxed lattice and additional electrons using relaxe lattice from #9 (PQ unstrained doped)
 
 
-num_of_atoms=16
+num_of_atoms=32
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!the lattice vectors are permuted!!!!!!!!!!!!!!!!!
@@ -57,7 +58,7 @@ P_P4nmm=29
 Q_Pbcn=29
 
 #number of electrons per unit cell for Q unstrained doped calculations
-nelect=0.0
+nelect=1.0
 
 #number of electron window for chem pot calculations
 nelect_min=0.0
@@ -66,8 +67,8 @@ nsteps=4
 #index of Q amplitude for which chem pot is determined
 Q_index=13
 
-script_start=8
-script_end=8
+script_start=12
+script_end=12
 
 #_____________________________________________________#
 P_ab_m_m=$(echo "($lat_ab_m_P4nmm - $lat_ab_m_P4ncc)/$P_P4nmm" | bc -l)
@@ -1187,5 +1188,101 @@ EOF
 
 done
 
+fi
+
+#_____________________PQ UNSTRAINED DOPED_____________________#
+
+if ((script_start <= 12 && script_end >= 12))
+then
+
+for ((i=0; i<=40; i++))
+do
+        dir="PQ_unstrained_doped/PQ_unstrained_doped_e_${nelect}_${i}"
+        echo $dir
+        #make directory
+        if [ ! -d $dir ]
+        then
+                mkdir $dir
+        fi
+        rm $dir/scf.in
+        #make an rscf file for every structure
+        cat > $dir/scf.in << EOF
+&CONTROL
+    calculation   = 'scf'
+    restart_mode  = 'from_scratch'
+    prefix        = 'Landau_${i}'
+    pseudo_dir    = '/cluster/scratch/mnoe/QE/pps'
+    outdir        = './'
+/
+&SYSTEM
+    ibrav       = 0
+    nat         = 32
+    ntyp        = 2
+    ecutwfc     = 120
+    occupations = 'smearing'
+    degauss     = 7.35d-4
+    tot_charge  = -${nelect}
+/
+&ELECTRONS
+    conv_thr    = 1.0d-8
+    diagonalization = 'david'
+/
+
+EOF
+
+       #retrieve the lattice constants and append atomic species to the scf file
+       dir_ref="PQ_unstrained/PQ_unstrained_${i}"
+       lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1)
+       lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1)
+       lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1)
+       cat >> $dir/scf.in << EOF
+CELL_PARAMETERS angstrom
+$lat_a
+$lat_b
+$lat_c
+
+ATOMIC_SPECIES
+W 183.84 W_ONCV_LDA-4.0.upf
+O 15.9994 O_ONCV_LDA-3.0.upf
+EOF
+
+
+       #append the atomic positions to the scf file and fix them
+       echo "" >> $dir/scf.in
+       echo "ATOMIC_POSITIONS crystal" >> $dir/scf.in
+       line=$(grep -n Direct ../STRUCTURES/PQ_${i}.vasp | cut -d : -f 1)
+
+       for ((j=0; j<num_of_atoms; j++))
+       do
+               line=$((line+1))
+               atom_pos=$(sed "${line}q;d" ../STRUCTURES/PQ_${i}.vasp)
+               echo "$atom_pos" >> $dir/scf.in
+       done
+
+
+       #append the k points to the rscf file
+       echo "" >> $dir/scf.in
+       echo "K_POINTS automatic" >> $dir/scf.in
+       echo "6 6 6 0 0 0" >> $dir/scf.in
+
+
+
+       #make the job file
+       rm $dir/job.sh
+       cat > $dir/job.sh << EOF
+       #!/bin/bash
+       #BSUB -n 40
+       #BSUB -R "rusage[mem=3072]"
+       #BSUB -W 02:00
+       #BSUB -o $dir.o
+       #BSUB -e $dir.e
+       #BSUB -J $dir
+
+
+        mpirun pw.x -npool 40 -in scf.in > scf.out
+        rm -r *.save
+EOF
+
+done
 fi
 

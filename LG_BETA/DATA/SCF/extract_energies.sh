@@ -1,9 +1,9 @@
 #!/bin/bash
 
 
-dir="PQ_unstrained/PQ_unstrained"
-filin="rscf.out"
-filout="../ENERGIES/energies_PQ_unstrained.txt"
+dir="PQ_unstrained_doped/PQ_unstrained_doped_e_1.0"
+filin="scf.out"
+filout="../ENERGIES/energies_PQ_unstrained_e100.txt"
 
 if [ -f $filout ]
 then
