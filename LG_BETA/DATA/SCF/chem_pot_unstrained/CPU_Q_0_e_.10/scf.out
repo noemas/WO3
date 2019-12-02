@@ -1,0 +1,178 @@
+
+     Program PWSCF v.6.4.1 starts on  2Dec2019 at 21:50:51 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on    40 processors
+
+     MPI processes distributed on     4 nodes
+     K-points division:     npool     =      40
+     Reading input from scf.in
+
+     Current dimensions of program PWSCF are:
+     Max number of different atomic species (ntypx) = 10
+     Max number of k-points (npk) =  40000
+     Max angular momentum in pseudopotentials (lmaxx) =  3
+
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     a serial algorithm will be used
+
+     Found symmetry operation: I + ( -0.5000  0.0000 -0.5000)
+     This is a supercell, fractional translations are disabled
+     Message from routine setup:
+     using ibrav=0 with symmetry is DISCOURAGED, use correct ibrav instead
+ 
+     G-vector sticks info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Sum        7759    7759   2079               499215   499215   69157
+ 
+
+
+     bravais-lattice index     =            0
+     lattice parameter (alat)  =      13.8562  a.u.
+     unit-cell volume          =    2810.9977 (a.u.)^3
+     number of atoms/cell      =           32
+     number of atomic types    =            2
+     number of electrons       =       368.10
+     number of Kohn-Sham states=          221
+     kinetic-energy cutoff     =     120.0000  Ry
+     charge density cutoff     =     480.0000  Ry
+     convergence threshold     =      1.0E-08
+     mixing beta               =       0.7000
+     number of iterations used =            8  plain     mixing
+     Exchange-correlation      = SLA PW NOGX NOGC ( 1  4  0  0 0 0)
+
+     celldm(1)=  13.856156  celldm(2)=   0.000000  celldm(3)=   0.000000
+     celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
+
+     crystal axes: (cart. coord. in units of alat)
+               a(1) = (   1.000000   0.000000   0.000000 )  
+               a(2) = (   0.000000   1.056674   0.000000 )  
+               a(3) = (   0.000000   0.000000   0.999980 )  
+
+     reciprocal axes: (cart. coord. in units 2 pi/alat)
+               b(1) = (  1.000000  0.000000  0.000000 )  
+               b(2) = (  0.000000  0.946366  0.000000 )  
+               b(3) = (  0.000000  0.000000  1.000020 )  
+
+
+     PseudoPot. # 1 for W  read from file:
+     /cluster/scratch/mnoe/QE/pps/W_ONCV_LDA-4.0.upf
+     MD5 check sum: ba0307d5d4cd419d6f1d13dc49d7c13a
+     Pseudo is Norm-conserving + core correction, Zval = 28.0
+     Generated using ONCVPSP code by D. R. Hamann
+     Using radial grid of 1380 points,  8 beta functions with: 
+                l(1) =   0
+                l(2) =   0
+                l(3) =   1
+                l(4) =   1
+                l(5) =   2
+                l(6) =   2
+                l(7) =   3
+                l(8) =   3
+
+     PseudoPot. # 2 for O  read from file:
+     /cluster/scratch/mnoe/QE/pps/O_ONCV_LDA-3.0.upf
+     MD5 check sum: b55cdb4f45ae2203d24ad12cf8d61a31
+     Pseudo is Norm-conserving + core correction, Zval =  6.0
+     Generated using ONCVPSP code by D. R. Hamann
+     Using radial grid of  926 points,  5 beta functions with: 
+                l(1) =   0
+                l(2) =   0
+                l(3) =   1
+                l(4) =   1
+                l(5) =   2
+
+     atomic species   valence    mass     pseudopotential
+        W             28.00   183.84000     W ( 1.00)
+        O              6.00    15.99940     O ( 1.00)
+
+      2 Sym. Ops., with inversion, found
+
+
+
+   Cartesian axes
+
+     site n.     atom                  positions (alat units)
+         1           W   tau(   1) = (   0.2500000   0.2978341   0.0000000  )
+         2           W   tau(   2) = (   0.7500000   0.7588399   0.0000000  )
+         3           W   tau(   3) = (   0.2500000   0.2305029   0.4999899  )
+         4           W   tau(   4) = (   0.7500000   0.8261711   0.4999899  )
+         5           W   tau(   5) = (   0.7500000   0.2978341   0.4999899  )
+         6           W   tau(   6) = (   0.2500000   0.7588399   0.4999899  )
+         7           W   tau(   7) = (   0.7500000   0.2305029   0.0000000  )
+         8           W   tau(   8) = (   0.2500000   0.8261711   0.0000000  )
+         9           O   tau(   9) = (   0.2500000   0.0087915   0.0000000  )
+        10           O   tau(  10) = (   0.7500000   1.0478825   0.0000000  )
+        11           O   tau(  11) = (   0.2500000   0.5195455   0.4999899  )
+        12           O   tau(  12) = (   0.7500000   0.5371285   0.4999899  )
+        13           O   tau(  13) = (   0.7500000   0.0087915   0.4999899  )
+        14           O   tau(  14) = (   0.2500000   1.0478825   0.4999899  )
+        15           O   tau(  15) = (   0.7500000   0.5195455   0.0000000  )
+        16           O   tau(  16) = (   0.2500000   0.5371285   0.0000000  )
+        17           O   tau(  17) = (   0.5000000   0.2641685   0.4495309  )
+        18           O   tau(  18) = (   0.5000000   0.7925055   0.5504488  )
+        19           O   tau(  19) = (   0.0000000   0.2641685   0.9495208  )
+        20           O   tau(  20) = (   0.0000000   0.7925055   0.0504590  )
+        21           O   tau(  21) = (   0.5000000   0.2641685   0.0504590  )
+        22           O   tau(  22) = (   0.5000000   0.7925055   0.9495208  )
+        23           O   tau(  23) = (   0.0000000   0.2641685   0.5504488  )
+        24           O   tau(  24) = (   0.0000000   0.7925055   0.4495309  )
+        25           O   tau(  25) = (   0.6995400   0.2641685   0.7499848  )
+        26           O   tau(  26) = (   0.3004600   0.7925055   0.2499949  )
+        27           O   tau(  27) = (   0.8004600   0.2641685   0.2499949  )
+        28           O   tau(  28) = (   0.1995400   0.7925055   0.7499848  )
+        29           O   tau(  29) = (   0.3004600   0.2641685   0.7499848  )
+        30           O   tau(  30) = (   0.6995400   0.7925055   0.2499949  )
+        31           O   tau(  31) = (   0.1995400   0.2641685   0.2499949  )
+        32           O   tau(  32) = (   0.8004600   0.7925055   0.7499848  )
+
+     number of k points=   112  gaussian smearing, width (Ry)=  0.0007
+
+     Number of k-points >= 100: set verbosity='high' to print them.
+
+     Dense  grid:   499215 G-vectors     FFT dimensions: ( 100, 108, 100)
+
+     Estimated max dynamical RAM per process >       3.34 GB
+
+     Estimated total dynamical RAM >     133.56 GB
+
+     Initial potential from superposition of free atoms
+
+     starting charge  367.99656, renormalised to  368.10000
+     Starting wfcs are  232 randomized atomic wfcs
+
+     total cpu time spent up to now is       74.6 secs
+
+     Self-consistent Calculation
+
+     iteration #  1     ecut=   120.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     ethr =  1.00E-02,  avg # of iterations =  4.9
+
+     total cpu time spent up to now is      333.5 secs
+
+     total energy              =   -6253.87188026 Ry
+     Harris-Foulkes estimate   =   -6264.53714977 Ry
+     estimated scf accuracy    <      13.48936579 Ry
+
+     iteration #  2     ecut=   120.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+--------------------------------------------------------------------------
+ORTE has lost communication with a remote daemon.
+
+  HNP daemon   : [[10913,0],0] on node eu-c7-050-01
+  Remote daemon: [[10913,0],2] on node eu-c7-042-07
+
+This is usually due to either a failure of the TCP network
+connection to the node, or possibly an internal failure of
+the daemon itself. We cannot recover from this failure, and
+therefore will terminate the job.
+--------------------------------------------------------------------------

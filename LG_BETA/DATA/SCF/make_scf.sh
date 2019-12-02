@@ -64,16 +64,16 @@ nelect=0.36
 
 #number of electron window for chem pot calculations
 nelect_min=0.0
-nelect_max=0.1
-nsteps=4
+nelect_max=1.0
+nsteps=10
 
 #name of structure for which chem pot is calculated
-chem_pot_structure="P"
+chem_pot_structure="Q"
 #index of structure for which chem pot is calculated
 chem_pot_index=0
 
-script_start=4
-script_end=4
+script_start=12
+script_end=12
 
 #_____________________________________________________#
 P_ab_m_m=$(echo "($lat_ab_m_P4nmm - $lat_ab_m_P4ncc)/$P_P4nmm" | bc -l)
@@ -88,17 +88,23 @@ hisym_lat_a=0
 hisym_lat_b=0
 hisym_lat_c=0
 
+kpoints=""
 
 if [ $num_of_atoms -eq 16 ]
 then
 	hisym_lat_a=$hisym_lat_a_16
 	hisym_lat_b=$hisym_lat_b_16
 	hisym_lat_c=$hisym_lat_c_16
+   
+        kpoints="9 9 6 0 0 0"
+
 elif [ $num_of_atoms -eq 32 ]
 then
         hisym_lat_a=$hisym_lat_a_32
         hisym_lat_b=$hisym_lat_b_32
         hisym_lat_c=$hisym_lat_c_32
+
+        kpoints="6 6 6 0 0 0"
 fi
 
 
@@ -1176,7 +1182,7 @@ EOF
        #append the k points to the rscf file
        echo "" >> $dir/scf.in
        echo "K_POINTS automatic" >> $dir/scf.in
-       echo "6 6 6 0 0 0" >> $dir/scf.in
+       echo "$kpoints" >> $dir/scf.in
 
        #make the job file
        rm $dir/job.sh
@@ -1238,17 +1244,39 @@ do
 /
 EOF
 
-       #retrieve the lattice constants and append atomic species to the scf file
-       dir_ref="${chem_pot_structure}_unstrained/${chem_pot_structure}_unstrained_${chem_pot_index}"
-       lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1 | awk '{print $1}')
-       lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1 | awk '{print $2}')
-       lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1 | awk '{print $3}')
+       if [ "$chem_pot_structure" == "P" ]
+       then
+           #retrieve the lattice constants and append atomic species to the scf file
+           dir_ref="P_unstrained/P_unstrained_${i}"
+           lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1 | awk '{print $1}')
+           lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1 | awk '{print $2}')
+           lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1 | awk '{print $3}')
+    
+           m_ab=$(echo "$lat_ab_m_P4ncc + $P_ab_m_m*$i" | bc -l)
+           m_c=$(echo "$lat_c_m_P4ncc + $P_c_m_m*$i" | bc -l)
+           lat_a=$(echo "$lat_a + $m_ab * $nelect" | bc -l)
+           lat_b=$(echo "$lat_b + $m_ab * $nelect" | bc -l)
+           lat_c=$(echo "$lat_c + $m_c * $nelect" | bc -l)
 
-       m_ab=$(echo "$lat_ab_m_P4ncc + $P_ab_m_m*${chem_pot_index}" | bc -l)
-       m_c=$(echo "$lat_c_m_P4ncc + $P_c_m_m*${chem_pot_index}" | bc -l)
-       lat_a=$(echo "$lat_a + $m_ab * $nelect" | bc -l)
-       lat_b=$(echo "$lat_b + $m_ab * $nelect" | bc -l)
-       lat_c=$(echo "$lat_c + $m_c * $nelect" | bc -l)
+       elif [ "$chem_pot_structure" == "Q" ]
+       then
+           #retrieve the lattice constants and append atomic species to the scf file
+           dir_ref="Q_unstrained/Q_unstrained_${i}"
+           lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1 | awk '{print $1}')
+           lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1 | awk '{print $2}')
+           lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1 | awk '{print $3}')
+     
+           #take care of the permutaions in the lattice vectors when changing setting
+           #and of the sqrt(2) considering the rotation of the unit cells
+           m_a=$(echo "sqrt(2)*$lat_ab_m_P4ncc + $Q_a_m_m*$i" | bc -l)
+           m_b=$(echo "$lat_c_m_P4ncc + $Q_b_m_m*$i" | bc -l)
+           m_c=$(echo "sqrt(2)*$lat_ab_m_P4ncc + $Q_c_m_m*$i" | bc -l)
+           lat_a=$(echo "$lat_a + $m_a * $nelect" | bc -l)
+           lat_b=$(echo "$lat_b + $m_b * $nelect" | bc -l)
+           lat_c=$(echo "$lat_c + $m_c * $nelect" | bc -l)
+        fi
+
+
 
        cat >> $dir/scf.in << EOF
 CELL_PARAMETERS angstrom
@@ -1277,7 +1305,7 @@ EOF
        #append the k points to the rscf file
        echo "" >> $dir/scf.in
        echo "K_POINTS automatic" >> $dir/scf.in
-       echo "6 6 6 0 0 0" >> $dir/scf.in
+       echo "$kpoints" >> $dir/scf.in
 
        #make the job file
        rm $dir/job.sh
