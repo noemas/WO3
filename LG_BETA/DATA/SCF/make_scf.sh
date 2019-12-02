@@ -17,7 +17,7 @@
 #12 -some fixed amplitdue (Q,P) and additional electrons to calculate chemical potential using respective relaxed lattices
 #    and interpolating charged lattice relaxation from NaWO3 (chem pot unstrained)
 
-num_of_atoms=16
+num_of_atoms=32
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!the lattice vectors are permuted!!!!!!!!!!!!!!!!!
@@ -45,45 +45,44 @@ lat_ab_m_P4nmm=0.07407987350000012
 lat_c_m_P4nmm=-0.016145953999999962
 
 #how lattices change upon doping in NaWO3 P4ncc structure
-lat_ab_m_P4ncc=0.11575900200000011
-lat_c_m_P4ncc=-0.0496028785
+lat_ab_m_P4ncc=0.06300296125000004
+lat_c_m_P4ncc=-0.01766520749999989
 
-#how lattices change upon doping in NaWO3 Pbcn structure
-#these slopes need to correspond to the unpermuted lattice vectors (i.e. P4ncc setting)!
-lat_a_m_Pbcn=0
-lat_b_m_Pbcn=0
-lat_c_m_Pbcm=0
+#how lattices change upon doping in NaWO3 Pbcn structure (where lattices are permuted)
+lat_a_m_Pbcn=0.03860989527500003
+lat_b_m_Pbcn=0.0064149232375000365
+lat_c_m_Pbcm=0.03522613958749998
 
 #index of P at which we have approximately bulk P4nmm structure beginning from P4ncc structure
 P_P4nmm=29
 
 #index of Q at which we have approximately bulk Pbcn structure beginning from P4ncc structure
-Q_Pbcn=1
+Q_Pbcn=26
 
 #number of electrons per unit cell for Q,2Q,P,PQ unstrained doped calculations
-nelect=0.18
+nelect=0.36
 
 #number of electron window for chem pot calculations
 nelect_min=0.0
-nelect_max=0.2
+nelect_max=0.1
 nsteps=4
 
 #name of structure for which chem pot is calculated
-chem_pot_structure="Q"
+chem_pot_structure="P"
 #index of structure for which chem pot is calculated
-chem_pot_index=13
+chem_pot_index=0
 
-script_start=11
-script_end=11
+script_start=4
+script_end=4
 
 #_____________________________________________________#
 P_ab_m_m=$(echo "($lat_ab_m_P4nmm - $lat_ab_m_P4ncc)/$P_P4nmm" | bc -l)
 P_c_m_m=$(echo "($lat_c_m_P4nmm - $lat_c_m_P4ncc)/$P_P4nmm" | bc -l)
 
 #careful with the permutations here!
-Q_a_m_m=$(echo "($lat_a_m_Pbcn - $lat_ab_m_P4ncc)/$Q_Pbcn" | bc -l)
-Q_b_m_m=$(echo "($lat_b_m_Pbcn - $lat_ab_m_P4ncc)/$Q_Pbcn" | bc -l)
-Q_c_m_m=$(echo "($lat_c_m_Pbcn - $lat_c_m_P4ncc)/$Q_Pbcn" | bc -l)
+Q_a_m_m=$(echo "($lat_a_m_Pbcn - sqrt(2)*$lat_ab_m_P4ncc)/$Q_Pbcn" | bc -l)
+Q_b_m_m=$(echo "($lat_b_m_Pbcn - $lat_c_m_P4ncc)/$Q_Pbcn" | bc -l)
+Q_c_m_m=$(echo "($lat_c_m_Pbcn - sqrt(2)*$lat_ab_m_P4ncc)/$Q_Pbcn" | bc -l)
 
 hisym_lat_a=0
 hisym_lat_b=0
@@ -450,11 +449,12 @@ EOF
        lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1 | awk '{print $3}')
 
        #take care of the permutaions in the lattice vectors when changing setting
-       m_a=$(echo "$lat_a_m_P4ncc + $Q_a_m_m*$i" | bc -l)
-       m_b=$(echo "$lat_b_m_P4ncc + $Q_b_m_m*$i" | bc -l)
-       m_c=$(echo "$lat_c_m_P4ncc + $Q_c_m_m*$i" | bc -l)
+       #and of the sqrt(2) considering the rotation of the unit cells
+       m_a=$(echo "sqrt(2)*$lat_ab_m_P4ncc + $Q_a_m_m*$i" | bc -l)
+       m_b=$(echo "$lat_c_m_P4ncc + $Q_b_m_m*$i" | bc -l)
+       m_c=$(echo "sqrt(2)*$lat_ab_m_P4ncc + $Q_c_m_m*$i" | bc -l)
        lat_a=$(echo "$lat_a + $m_a * $nelect" | bc -l)
-       lat_b=$(echo "$lat_b + $m_a * $nelect" | bc -l)
+       lat_b=$(echo "$lat_b + $m_b * $nelect" | bc -l)
        lat_c=$(echo "$lat_c + $m_c * $nelect" | bc -l)
 
        cat >> $dir/scf.in << EOF
@@ -1182,14 +1182,115 @@ EOF
        rm $dir/job.sh
        cat > $dir/job.sh << EOF
        #!/bin/bash
-       #BSUB -n 64
+       #BSUB -n 40
        #BSUB -R "rusage[mem=3072]"
        #BSUB -W 8:00
        #BSUB -o $dir.o
        #BSUB -e $dir.e
        #BSUB -J $dir
 
-        mpirun pw.x -npool 64 -in scf.in > scf.out
+        mpirun pw.x -npool 40 -in scf.in > scf.out
+EOF
+
+done
+fi
+
+
+#_____________________CHEM_POT_UNSTRRAINED___________________#
+if ((script_start <= 12 && script_end >= 12))
+then
+        dnelect=$(echo "scale=2; ($nelect_max-$nelect_min)/$nsteps" | bc -l)
+for ((i=0; i<=nsteps; i++))
+do
+
+        nelect=$(echo "scale=2; $nelect_min + $i*$dnelect" | bc -l)
+
+
+        dir="chem_pot_unstrained/CPU_${chem_pot_structure}_${chem_pot_index}_e_${nelect}"
+        echo $dir
+        #make directory
+        if [ ! -d $dir ]
+        then
+                mkdir $dir
+        fi
+        rm $dir/scf.in
+        #make an scf file for every structure
+        cat > $dir/scf.in << EOF
+&CONTROL
+    calculation   = 'scf'
+    restart_mode  = 'from_scratch'
+    prefix        = 'chempot_${i}'
+    pseudo_dir    = '/cluster/scratch/mnoe/QE/pps'
+    outdir        = './'
+/
+&SYSTEM
+    ibrav       = 0
+    nat         = ${num_of_atoms}
+    ntyp        = 2
+    ecutwfc     = 120
+    occupations = 'smearing'
+    degauss     = 7.35d-4
+    tot_charge  = -${nelect}
+/
+&ELECTRONS
+    conv_thr    = 1.0d-8
+    diagonalization = 'david'
+/
+EOF
+
+       #retrieve the lattice constants and append atomic species to the scf file
+       dir_ref="${chem_pot_structure}_unstrained/${chem_pot_structure}_unstrained_${chem_pot_index}"
+       lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1 | awk '{print $1}')
+       lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1 | awk '{print $2}')
+       lat_c=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | tail -n1 | awk '{print $3}')
+
+       m_ab=$(echo "$lat_ab_m_P4ncc + $P_ab_m_m*${chem_pot_index}" | bc -l)
+       m_c=$(echo "$lat_c_m_P4ncc + $P_c_m_m*${chem_pot_index}" | bc -l)
+       lat_a=$(echo "$lat_a + $m_ab * $nelect" | bc -l)
+       lat_b=$(echo "$lat_b + $m_ab * $nelect" | bc -l)
+       lat_c=$(echo "$lat_c + $m_c * $nelect" | bc -l)
+
+       cat >> $dir/scf.in << EOF
+CELL_PARAMETERS angstrom
+$lat_a 0 0
+0 $lat_b 0
+0 0 $lat_c
+
+ATOMIC_SPECIES
+W 183.84 W_ONCV_LDA-4.0.upf
+O 15.9994 O_ONCV_LDA-3.0.upf
+EOF
+
+       #append the atomic positions to the scf file
+       echo "" >> $dir/scf.in
+       echo "ATOMIC_POSITIONS crystal" >> $dir/scf.in
+       line=$(grep -n Direct ../STRUCTURES/${chem_pot_structure}_${chem_pot_index}.vasp | cut -d : -f 1)
+
+       for ((j=0; j<num_of_atoms; j++))
+       do
+               line=$((line+1))
+               atom_pos=$(sed "${line}q;d" ../STRUCTURES/${chem_pot_structure}_${chem_pot_index}.vasp)
+               echo "$atom_pos" >> $dir/scf.in
+       done
+
+
+       #append the k points to the rscf file
+       echo "" >> $dir/scf.in
+       echo "K_POINTS automatic" >> $dir/scf.in
+       echo "6 6 6 0 0 0" >> $dir/scf.in
+
+       #make the job file
+       rm $dir/job.sh
+       cat > $dir/job.sh << EOF
+       #!/bin/bash
+       #BSUB -n 40
+       #BSUB -R "rusage[mem=3072]"
+       #BSUB -W 8:00
+       #BSUB -o $dir.o
+       #BSUB -e $dir.e
+       #BSUB -J $dir
+
+        mpirun pw.x -npool 40 -in scf.in > scf.out
 EOF
 
 done
