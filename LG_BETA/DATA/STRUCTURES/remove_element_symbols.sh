@@ -12,5 +12,6 @@ do
 		line=$((9+i))
 		sed -i "${line}s/W//g" $file
                 sed -i "${line}s/O//g" $file
+                sed -i "${line}s/^\ *//1" $file
 	done
 done

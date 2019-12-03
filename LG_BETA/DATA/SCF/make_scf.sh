@@ -17,7 +17,7 @@
 #12 -some fixed amplitdue (Q,P) and additional electrons to calculate chemical potential using respective relaxed lattices
 #    and interpolating charged lattice relaxation from NaWO3 (chem pot unstrained)
 
-num_of_atoms=32
+num_of_atoms=16
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!the lattice vectors are permuted!!!!!!!!!!!!!!!!!
@@ -64,11 +64,11 @@ nelect=0.36
 
 #number of electron window for chem pot calculations
 nelect_min=0.0
-nelect_max=1.0
+nelect_max=0.5
 nsteps=10
 
 #name of structure for which chem pot is calculated
-chem_pot_structure="Q"
+chem_pot_structure="P"
 #index of structure for which chem pot is calculated
 chem_pot_index=0
 

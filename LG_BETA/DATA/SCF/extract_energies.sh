@@ -18,8 +18,8 @@
 #done
 
 #chem pot directories
-dir="chem_pot/CP_Q_0_e"
-filout="../ENERGIES/chem_pot_Pbcn.txt"
+dir="chem_pot_unstrained/CPU_Q_26_e"
+filout="../ENERGIES/chem_pot_unstrained_Pbcn.txt"
 
 nelect_min=0.0
 nelect_max=1.0
