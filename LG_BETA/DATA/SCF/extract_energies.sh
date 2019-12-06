@@ -18,11 +18,11 @@
 #done
 
 #chem pot directories
-dir="chem_pot_unstrained/CPU_Q_26_e"
-filout="../ENERGIES/chem_pot_unstrained_Pbcn.txt"
+dir="chem_pot/CP_P_0_e"
+filout="../ENERGIES/temp3.txt"
 
-nelect_min=0.0
-nelect_max=1.0
+nelect_min=1.0
+nelect_max=2.0
 nsteps=10
 
 if [ -f $filout ]

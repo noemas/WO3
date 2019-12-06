@@ -63,8 +63,8 @@ Q_Pbcn=26
 nelect=0.36
 
 #number of electron window for chem pot calculations
-nelect_min=0.0
-nelect_max=0.5
+nelect_min=1.0
+nelect_max=2.0
 nsteps=10
 
 #name of structure for which chem pot is calculated
@@ -72,8 +72,8 @@ chem_pot_structure="P"
 #index of structure for which chem pot is calculated
 chem_pot_index=0
 
-script_start=12
-script_end=12
+script_start=11
+script_end=11
 
 #_____________________________________________________#
 P_ab_m_m=$(echo "($lat_ab_m_P4nmm - $lat_ab_m_P4ncc)/$P_P4nmm" | bc -l)

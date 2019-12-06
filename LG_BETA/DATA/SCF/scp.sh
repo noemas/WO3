@@ -10,11 +10,11 @@
 #done
 
 #chem pot
-dirup="mnoe@euler.ethz.ch:/cluster/scratch/mnoe/QE/LANDAU_BETA/CPU_P_29_e"
-dirdown="chem_pot_unstrained/CPU_P_29_e"
+dirup="mnoe@euler.ethz.ch:/cluster/scratch/mnoe/QE/LANDAU_BETA/CP_P_0_e"
+dirdown="chem_pot/CP_P_0_e"
 
-nelect_min=0.0
-nelect_max=0.5
+nelect_min=1.0
+nelect_max=2.0
 nsteps=10
 
 dnelect=$(echo "scale=2; ($nelect_max-$nelect_min)/$nsteps" | bc -l)
