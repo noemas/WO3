@@ -18,11 +18,11 @@
 #done
 
 #chem pot directories
-dir="chem_pot/CP_P_0_e"
-filout="../ENERGIES/temp3.txt"
+dir="chem_pot/CP_PQ_29_e"
+filout="../ENERGIES/chem_pot_PQ_29.txt"
 
-nelect_min=1.0
-nelect_max=2.0
+nelect_min=0.0
+nelect_max=1.0
 nsteps=10
 
 if [ -f $filout ]

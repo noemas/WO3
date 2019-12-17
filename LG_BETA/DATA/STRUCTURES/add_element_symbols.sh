@@ -1,7 +1,7 @@
 #!/bin/bash
 #add element symbols as required for Q-E
 
-nat=16
+nat=32
 
 if [ $nat -eq 32 ]
 then
