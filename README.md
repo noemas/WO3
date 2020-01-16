@@ -1,10 +1,11 @@
 # WO3
 WO3 paper repository
 
-###relaxed WO3 bulk structures
+### relaxed WO3 bulk structures ###
+
 these can be found in [/BULK/](https://github.com/noemas/WO3/tree/master/BULK)
 
-###WO3 beta domain wall supercells
+### WO3 beta domain wall supercells ###
 the relaxed VASP cells and input files can be found in [/DOMAIN_WALLS/](https://github.com/noemas/WO3/tree/master/DOMAIN_WALLS):
 - [/DOMAIN_WALLS/BETA_FIXED/](https://github.com/noemas/WO3/tree/master/DOMAIN_WALLS/BETA_FIXED) for the case where some atoms in each domain were fixed. The cut out unit cells for the phonon mode (order parameter) decomposition are stored in [DOMAIN_WALLS/BETA_FIXED/UCS](https://github.com/noemas/WO3/tree/master/DOMAIN_WALLS/BETA_FIXED/UCS)
 
@@ -14,7 +15,7 @@ the relaxed VASP cells and input files can be found in [/DOMAIN_WALLS/](https://
 
 The directory furthermore contains a script ("mode_decomposition.ipynb") that calls ISODISTORT for the cut out unit cell and calculates angle and amplitude of the order parameter across the domain wall.    
 
-###Landau-Ginzburg theory of WO3 beta domain walls
+### Landau-Ginzburg theory of WO3 beta domain walls ###
 All scripts and data concerning this are found in [/LG_BETA/](https://github.com/noemas/WO3/tree/master/LG_BETA) where the main script "Landau_Ginzburg_Beta.ipynb" uses all data to calculate the Landau and Ginzburg parameters with and without additional charge and minimizes the the Landau-Ginzburg potential to obtain the domain walls.
 
 The data in [/LG_BETA/DATA/](https://github.com/noemas/WO3/tree/master/LG_BETA/DATA) contains the following:
@@ -30,7 +31,7 @@ The data in [/LG_BETA/DATA/](https://github.com/noemas/WO3/tree/master/LG_BETA/D
 
 [/LG_BETA/DATA/P4ncc_mode](https://github.com/noemas/WO3/tree/master/LG_BETA/DATA/P4ncc_mode) contains tools to generate modulations of modes obtained from the dynamical matrices.
 
-###Electron-phonon coupling and superconductivity in WO3
+### Electron-phonon coupling and superconductivity in WO3 ###
 The data and scripts for electron-phonon coupling calculations can be found in [/EPC/](https://github.com/noemas/WO3/tree/master/EPC). There are two calculation series. One denoted by "fc" for fixed cell (which are used in the paper) and one with "vc" for variable cell. Fixed cell refers to the manual setting of the charged cells without explicit relaxation and variable cell refers to explicit relaxation of charged cells. For every calculation, the electron bands, phonon bands, phonon dos, phonon linewidth and a2f function are stored in the respective directories. Scripts for the plots and calculation of Tc are in the "coupling_plots.ipynb" notebook and a script to calculate the a2f function from lambdas on a grid in the "a2f.ipynb" notebook. 
 
 
