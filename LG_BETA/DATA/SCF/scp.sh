@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dirup="mnoe@euler.ethz.ch:/cluster/scratch/mnoe/P2Q_unstrained/P2Q_unstrained"
-dirdown="./P2Q_unstrained/P2Q_unstrained"
+dirup="mnoe@euler.ethz.ch:/cluster/scratch/mnoe/2Q_unstrained/2Q_unstrained"
+dirdown="./2Q_unstrained/2Q_unstrained"
 fil="rscf.out"
 
 for ((i=0;i<=40;i++))

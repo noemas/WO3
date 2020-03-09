@@ -22,7 +22,8 @@ hisym_lat_c_16="        0.0             0.0            7.7496299744"
 #!!!!!!!!!!the lattice vectors are permuted!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-prefix="P2Q"
+#prefix of the vasp files
+prefix="P2Q_P421c"
 
 #number of electrons per unit cell for unstrained doped calculations
 nelect=0.36

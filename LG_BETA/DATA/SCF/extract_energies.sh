@@ -2,9 +2,9 @@
 
 
 #Q, 2Q, P, PQ directories
-dir="P2Q_unstrained/P2Q_unstrained"
+dir="2Q_unstrained/2Q_unstrained"
 filin="rscf.out"
-filout="../ENERGIES/energies_P2Q_unstrained.txt"
+filout="../ENERGIES/energies_2Q_unstrained.txt"
 
 if [ -f $filout ]
 then
@@ -13,7 +13,7 @@ fi
 
 for ((i=0; i<=40; i++))
 do
-	E=$(grep "!    total energy" ${dir}_${i}/${filin} | tail -n1 | awk '{print $5}')
+	E=$(grep "!    total energy" ${dir}_${i}/${filin} | tail -n2 | head -n1 | awk '{print $5}')
 	echo $i $E >> $filout
 done
 
