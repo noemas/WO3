@@ -59,12 +59,12 @@ nelect=0.36
 #number of electron window for chem pot calculations
 nelect_min=0.0
 nelect_max=1.0
-nsteps=10
+nsteps=80
 
 #name of structure for which chem pot is calculated
-chem_pot_structure="PQ"
+chem_pot_structure="Q"
 #index of structure for which chem pot is calculated
-chem_pot_index=29
+chem_pot_index=0
 
 script_start=11
 script_end=11
@@ -800,11 +800,11 @@ fi
 #_____________________CHEM_POT___________________#
 if ((script_start <= 11 && script_end >= 11))
 then
-        dnelect=$(echo "scale=2; ($nelect_max-$nelect_min)/$nsteps" | bc -l)
+        dnelect=$(echo "scale=4; ($nelect_max-$nelect_min)/$nsteps" | bc -l)
 for ((i=0; i<=nsteps; i++))
 do
 
-        nelect=$(echo "scale=2; $nelect_min + $i*$dnelect" | bc -l)
+        nelect=$(echo "scale=4; $nelect_min + $i*$dnelect" | bc -l)
 
 
         dir="chem_pot/CP_${chem_pot_structure}_${chem_pot_index}_e_${nelect}"
@@ -812,7 +812,7 @@ do
         #make directory
         if [ ! -d $dir ]
         then
-                mkdir $dir
+                mkdir -p $dir
         fi
         rm $dir/scf.in
         #make an scf file for every structure
@@ -861,12 +861,12 @@ EOF
        #append the atomic positions to the scf file
        echo "" >> $dir/scf.in
        echo "ATOMIC_POSITIONS crystal" >> $dir/scf.in
-       line=$(grep -n Direct ../STRUCTURES/${chem_pot_structure}_${chem_pot_index}.vasp | cut -d : -f 1)
+       line=$(grep -n Direct ../STRUCTURES/${chem_pot_structure}/${chem_pot_structure}_${chem_pot_index}.vasp | cut -d : -f 1)
 
        for ((j=0; j<num_of_atoms; j++))
        do
                line=$((line+1))
-               atom_pos=$(sed "${line}q;d" ../STRUCTURES/${chem_pot_structure}_${chem_pot_index}.vasp)
+               atom_pos=$(sed "${line}q;d" ../STRUCTURES/${chem_pot_structure}/${chem_pot_structure}_${chem_pot_index}.vasp)
                echo "$atom_pos" >> $dir/scf.in
        done
 
@@ -879,15 +879,15 @@ EOF
        #make the job file
        rm $dir/job.sh
        cat > $dir/job.sh << EOF
-       #!/bin/bash
-       #BSUB -n 40
-       #BSUB -R "rusage[mem=3072]"
-       #BSUB -W 8:00
-       #BSUB -o $dir.o
-       #BSUB -e $dir.e
-       #BSUB -J $dir
+#!/bin/bash
+#BSUB -n 40
+#BSUB -R "rusage[mem=3072]"
+#BSUB -W 2:00
+#BSUB -o %J.o
+#BSUB -e %J.e
+#BSUB -J $dir
 
-        mpirun pw.x -npool 40 -in scf.in > scf.out
+ mpirun pw.x -npool 40 -in scf.in > scf.out
 EOF
 
 done

@@ -23,12 +23,13 @@ hisym_lat_c_16="        0.0             0.0            7.7496299744"
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #prefix of the vasp files
-prefix="P2Q_P421c"
+prefix="P2Q_P421c_2"
 
 #number of electrons per unit cell for unstrained doped calculations
-nelect=0.36
+nelect=0.6
 
 ncores=40
+starttime="00:00"
 
 #_____________________________________________________#
 hisym_lat_a=0
@@ -56,17 +57,18 @@ fi
 #_____________________________________________________#
 
 
-
+if [ $(echo "$nelect == 0 " | bc -l) -eq 1 ]
+then
 
 #_______________________UNSTRAINED____________________#
-for ((i=0; i<=40; i++))
+for ((i=0; i<=20; i++))
 do
 	dir="${prefix}_unstrained/${prefix}_unstrained_${i}"
 	echo $dir
 	#make directory
 	if [ ! -d $dir ]
 	then
-		mkdir $dir
+		mkdir -p $dir
 	fi
 	rm $dir/rscf.in
 	#make an rscf file for every structure
@@ -122,12 +124,12 @@ EOF
 	#append the atomic positions to the rscf file and fix them
 	echo "" >> $dir/rscf.in
 	echo "ATOMIC_POSITIONS crystal" >> $dir/rscf.in
-	line=$(grep -n Direct ../STRUCTURES/${prefix}_${i}.vasp | cut -d : -f 1)
+	line=$(grep -n Direct ../STRUCTURES/${prefix}/${prefix}_${i}.vasp | cut -d : -f 1)
 
 	for ((j=0; j<num_of_atoms; j++))
 	do
 		line=$((line+1))
-		atom_pos=$(sed "${line}q;d" ../STRUCTURES/${prefix}_${i}.vasp)
+		atom_pos=$(sed "${line}q;d" ../STRUCTURES/${prefix}/${prefix}_${i}.vasp)
 		echo "$atom_pos 0 0 0" >> $dir/rscf.in
 	done
 
@@ -139,30 +141,33 @@ EOF
         #make the job file
 	rm $dir/job.sh
         cat > $dir/job.sh << EOF
-        #!/bin/bash
-        #BSUB -n $ncores
-        #BSUB -R "rusage[mem=3072]"
-        #BSUB -W 8:00
-        #BSUB -o $dir.o
-        #BSUB -e $dir.e
-        #BSUB -J $dir
+#!/bin/bash
+#BSUB -n $ncores
+#BSUB -R "rusage[mem=3072]"
+#BSUB -W 8:00
+#BSUB -o %J.o
+#BSUB -e %J.e
+#BSUB -J $dir
+#BSUB -b $starttime
 
-        mpirun pw.x -npool $ncores -in rscf.in > rscf.out
+mpirun pw.x -npool $ncores -in rscf.in > rscf.out
+rm -r *.save
 EOF
 done
 
+else
 
-exit
+
 
 #_____________________UNSTRAINED DOPED_____________________#
-for ((i=0; i<=40; i++))
+for ((i=0; i<=20; i++))
 do
-	dir="${prefix}_unstrained_doped/${prefix}_unstrained_doped_e_${nelect}_${i}"
+	dir="${prefix}_unstrained_doped/e_$nelect/${i}"
         echo $dir
         #make directory
         if [ ! -d $dir ]
         then
-                mkdir $dir
+                mkdir -p $dir
         fi
         rm $dir/scf.in
         #make an rscf file for every structure
@@ -190,7 +195,7 @@ do
 
 EOF
 
-       #retrieve the lattice constants and append atomic species to the scf file
+       #retrieve the lattice constants and append atomic species to the scf file 
        dir_ref="${prefix}_unstrained/${prefix}_unstrained_${i}"
        lat_a=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n1)
        lat_b=$(grep CELL -A3 $dir_ref/rscf.out | tail -n3 | head -n2 | tail -n1)
@@ -209,12 +214,12 @@ EOF
        #append the atomic positions to the scf file and fix them
        echo "" >> $dir/scf.in
        echo "ATOMIC_POSITIONS crystal" >> $dir/scf.in
-       line=$(grep -n Direct ../STRUCTURES/${prefix}_${i}.vasp | cut -d : -f 1)
+       line=$(grep -n Direct ../STRUCTURES/${prefix}/${prefix}_${i}.vasp | cut -d : -f 1)
 
        for ((j=0; j<num_of_atoms; j++))
        do
                line=$((line+1))
-               atom_pos=$(sed "${line}q;d" ../STRUCTURES/${prefix}_${i}.vasp)
+               atom_pos=$(sed "${line}q;d" ../STRUCTURES/${prefix}/${prefix}_${i}.vasp)
                echo "$atom_pos" >> $dir/scf.in
        done
 
@@ -224,23 +229,21 @@ EOF
        echo "K_POINTS automatic" >> $dir/scf.in
        echo $kpoints >> $dir/scf.in
 
-
-
        #make the job file
-       rm $dir/job.sh
+rm $dir/job.sh
        cat > $dir/job.sh << EOF
-       #!/bin/bash
-       #BSUB -n $ncores
-       #BSUB -R "rusage[mem=3072]"
-       #BSUB -W 00:40
-       #BSUB -o $dir.o
-       #BSUB -e $dir.e
-       #BSUB -J $dir
-       
+#!/bin/bash
+#BSUB -n $ncores
+#BSUB -R "rusage[mem=3072]"
+#BSUB -W 01:00
+#BSUB -o %.o
+#BSUB -e %.e
+#BSUB -J $dir
+#BSUB -b $starttime
 
-        mpirun pw.x -npool $ncores -in scf.in > scf.out
-        rm -r *.save
+mpirun pw.x -npool $ncores -in scf.in > scf.out
+rm -r *.save
 EOF
 
 done
-
+fi
